@@ -3,15 +3,15 @@ var canvas = $("#drawing-board")
 var ctx = canvas[0].getContext('2d')
 var offset = canvas.offset()
 var curPos = {x: 0, y: 0}
-var prevPos = {x: 0, y: 0}
 var clicking = false;
 resize()
 
 
 // Event listeners
-canvas.mousedown(e => {setPosition(e), clicking = !clicking})
+canvas.mousedown(e => {setPosition(e), clicking = true})
 canvas.mousemove(draw)
-canvas.mouseup(e => clicking = !clicking)
+canvas.mouseup(e => clicking = false)
+canvas.mouseout(e => clicking = false)
 $( window ).resize(resize)
 
 

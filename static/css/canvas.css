@@ -1,6 +1,9 @@
 html {
     margin: 0px;
     padding: 0px;
+}
+
+body {
     background-color: rgb(61, 61, 67);
     font-size: 20px;
 }
@@ -10,7 +13,7 @@ html {
     width: 80vw;
     height: 80vh;
     border: 2px solid black;
-    margin: 0 auto;
+    margin: 25px auto; /* top right bottom left */ 
 }
 
 #drawing-board {

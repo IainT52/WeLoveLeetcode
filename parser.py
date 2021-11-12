@@ -60,7 +60,6 @@ def parseVariableTemplates(variable, data):
 
 def generateXSRFToken():
     token = secrets.token_hex(16)
-    tokens.add(token)
     return token
 
 

@@ -2,18 +2,6 @@ import json, hashlib  # hashlib (SHA-1) needed for websockets
 from base64 import b64encode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
 
-# returns websocket response to accept communication
-def webSocketHandshake(key):
-    guid = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"  # WebSocket standard magic string
-    sha1 = hashlib.sha1()
-    sha1.update(bytes((key + guid), 'utf-8'))
-    sha1_key = sha1.hexdigest()
-    b64 = b64encode(bytes.fromhex(sha1_key)).decode()
-    response =  'HTTP/1.1 101 Switching Protocols\r\n' + \
-                'Connection: Upgrade\r\n' + \
-                'Upgrade: websocket\r\n' + \
-                'Sec-WebSocket-Accept: {}\r\n\r\n'.format(b64)
-    return response
 
 
 # decodes websocket frame (input is bytearray) with len < 126
@@ -74,9 +62,6 @@ def sendLargeFrame(self, payload):
 
 
 def openSocketConnection(self, key):
-    # Perform WebSocket Handshake...
-    # ws_response = webSocketHandshake(key) -------------------
-    # self.request.send(ws_response.encode()) ----------------
     clients.append(self)
     # send drawing here? 
 

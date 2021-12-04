@@ -12,6 +12,7 @@ def parseHeader(header_data, hasRequestLine):
     headers = {}
     start = 0
     header_data = header_data.decode("utf-8").split("\r\n")
+    
     # Parse request line
     if hasRequestLine:
         start = 1

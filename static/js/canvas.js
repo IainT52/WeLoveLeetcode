@@ -1,16 +1,68 @@
+/*
+
+WEBSOCKET
+
+*/
+
+// Establish a WebSocket connection with the server
+const socket = new WebSocket('ws://' + window.location.host + '/websocket');
+
+// Call the updateCanvas function whenever data is received from the server over the WebSocket
+socket.onmessage = updateCanvas;
+
+// Send an x,y coordinate of the current point drawn
+function sendCoordinate(pos) {
+    socket.send(JSON.stringify(pos))
+}
+
+
+// Called when the server sends a new coordinate over the WebSocket and draw it to the canvas
+function updateCanvas(message) {
+    let coordinate = JSON.parse(message.data)
+    ctx.beginPath()
+
+    ctx.lineWidth = 1
+    ctx.lineCap = 'round'
+    ctx.strokeStyle = '#c0392b'
+
+    ctx.moveTo(curPos.x, curPos.y)
+    setPosition(coordinate.x, coordinate.y)
+    ctx.lineTo(curPos.x, curPos.y)
+    
+    ctx.stroke()
+}
+
+
+// Socket close event
+socket.onclose = function (event) {
+    if (event.wasClean) {
+        console.log(`[close] Connection closed cleanly, code=${event.code} reason=${event.reason}`)
+    } else {
+        alert('[close] Connection died')
+    }
+};
+
+
+/*
+
+ CANVAS
+
+*/
+
+
 // Init Canvas State
 var canvas = $("#drawing-board")
 var ctx = canvas[0].getContext('2d')
 var offset = canvas.offset()
 var curPos = {x: 0, y: 0}
-var clicking = false;
+var clicking = false
 resize()
 
 
 window.setInterval(function(){
     let img = ctx.getImageData(0, 0, canvas.width(), canvas.height())
     console.log(img)
-}, 6000);
+}, 6000)
 
 
 // Event listeners
@@ -21,25 +73,27 @@ canvas.mouseout(e => clicking = false)
 $( window ).resize(resize)
 
 
-function setPosition(e) {
-    curPos.x = e.clientX - offset.left
-    curPos.y = e.clientY - offset.top
+function setPosition(x, y) {
+    curPos.x = x - offset.left
+    curPos.y = y - offset.top
     return
 }
 
 
 function draw(e) {
     if (clicking) {
-        ctx.beginPath();
-        ctx.lineWidth = 1;
-        ctx.lineCap = 'round';
-        ctx.strokeStyle = '#c0392b';
+        ctx.beginPath()
 
-        ctx.moveTo(curPos.x, curPos.y);
-        setPosition(e);
-        ctx.lineTo(curPos.x, curPos.y);
+        ctx.lineWidth = 1
+        ctx.lineCap = 'round'
+        ctx.strokeStyle = '#c0392b'
 
-        ctx.stroke();
+        ctx.moveTo(curPos.x, curPos.y)
+        setPosition(e.clientX, e.clientY)
+        ctx.lineTo(curPos.x, curPos.y)
+        
+        ctx.stroke()
+        sendCoordinate(curPos)
     }
 }
 

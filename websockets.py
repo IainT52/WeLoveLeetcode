@@ -75,8 +75,8 @@ def sendLargeFrame(self, payload):
 
 def openSocketConnection(self, key):
     # Perform WebSocket Handshake...
-    ws_response = webSocketHandshake(key)
-    self.request.send(ws_response.encode())
+    # ws_response = webSocketHandshake(key) -------------------
+    # self.request.send(ws_response.encode()) ----------------
     clients.append(self)
     # send drawing here? 
 

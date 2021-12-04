@@ -1,4 +1,4 @@
-import socketserver, json
+import paths, socketserver, json
 from websockets import openSocketConnection
 
 class Header:
@@ -59,10 +59,10 @@ class RequestHandler(socketserver.BaseRequestHandler):
         elif headers["Request-Type"].value == "DELETE":
             pass
         else:
-            pass
+            response = paths.handlePath(headers["Path"].value, headers)
 
-        response = None
         self.request.sendall(response)
+        
         if headers["Path"].value == "/websocket":
             key = headers["Sec-WebSocket-Key"].value
             openSocketConnection(self, key)

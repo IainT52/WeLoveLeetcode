@@ -1,4 +1,5 @@
 import socketserver, json
+from websockets import openSocketConnection
 
 class Header:
     def __init__(self, type, value, extra):
@@ -63,8 +64,8 @@ class RequestHandler(socketserver.BaseRequestHandler):
         response = None
         self.request.sendall(response)
         if headers["Path"].value == "/websocket":
-            # openSocketConnection(self)
-            pass
+            key = headers["Sec-WebSocket-Key"].value
+            openSocketConnection(self, key)
             
         self.request.close()
         return

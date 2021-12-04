@@ -1,5 +1,4 @@
-import json
-import hashlib  # SHA-1 for websockets
+import json, hashlib  # hashlib (SHA-1) needed for websockets
 from base64 import b64encode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
 
@@ -72,6 +71,21 @@ def sendLargeFrame(self, payload):
     frame += [len(payload) & 255]  # now fill first 8 bits (255 -> 11111111)
     frame_to_send = bytearray(frame) + payload
     return frame_to_send
+
+
+def openSocketConnection(self, key):
+    # Perform WebSocket Handshake...
+    ws_response = webSocketHandshake(key)
+    self.request.send(ws_response.encode())
+    clients.append(self)
+    # send drawing here? 
+
+    while True:
+        frame = bytearray(self.request.recv(1024).strip())
+        payload = decodeFrame(frame)
+        decoded_payload = json.loads(payload.decode())  # 'utf-8'
+        message = bytearray(json.dumps(decoded_payload).encode())
+        broadcast(message)
 
 # if request_line[1] == '/websocket':
 #     # Perform WebSocket Handshake...

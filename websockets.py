@@ -27,10 +27,13 @@ def decodeLargeFrame(frame, payload_len):
 
 
 # sends message to all clients, clients are added to this list on connection
-def broadcast(message):
+def broadcast(sender, message):
+    print("len clients: ", len(clients))
     for client in clients:
         try:
-            client.sendFrame(message)
+            if client == sender:
+                continue
+            sendFrame(client, message)
         except Exception as e:
             pass  # if client disconnects, we still try sending msg (causing an error)
     return
@@ -70,8 +73,8 @@ def openSocketConnection(self):
         frame = bytearray(self.request.recv(1024))
         payload = decodeFrame(frame)
         decoded_payload = json.loads(payload.decode())  # 'utf-8'
-        # message = bytearray(json.dumps(decoded_payload).encode())
-        # broadcast(message)c
+        message = bytearray(json.dumps(decoded_payload).encode())
+        broadcast(self, message)
 
 # if request_line[1] == '/websocket':
 #     # Perform WebSocket Handshake...

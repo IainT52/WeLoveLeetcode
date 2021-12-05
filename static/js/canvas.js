@@ -61,7 +61,6 @@ resize()
 
 window.setInterval(function(){
     let img = ctx.getImageData(0, 0, canvas.width(), canvas.height())
-    console.log(img)
 }, 6000)
 
 

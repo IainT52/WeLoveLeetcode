@@ -11,7 +11,8 @@ paths = {
     "/static/css/canvas.css": responses.handleFileResponse(getRelativePath("static/css/canvas.css"), "200 OK", "text/css"),
     "/static/js/canvas.js": responses.handleFileResponse(getRelativePath("static/js/canvas.js"), "200 OK", "text/javascript"),
     "/static/js/reglog.js": responses.handleFileResponse(getRelativePath("static/js/reglog.js"), "200 OK", "text/javascript"),
-    "/account": ""
+    "/account": "",
+    "/templates/canvas.html": responses.handleFileResponse(getRelativePath("templates/canvas.html"), "200 OK", "text/html"),
 }
 
 
@@ -29,6 +30,7 @@ def handlePath(client, path, headers, body):
             password = account_info['password']
             if account_info['create']:
                 success = register(username, password)
+                print(success)
                 if success:
                     return responses.handleTextResponse("Success", "200 OK")
                 else: 
@@ -36,8 +38,9 @@ def handlePath(client, path, headers, body):
 
             else:
                 success = login(username, password)
+                print(success)
                 if success:
-                    client.request.sendall(responses.handleTextResponse("Success", "200 OK"))
+                    # client.request.sendall(responses.handleTextResponse("Success", "200 OK"))
                     return responses.handleRedirect("templates\canvas.html")
                 else:
                     return responses.handleTextResponse("Failure", "200 OK")

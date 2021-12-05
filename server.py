@@ -54,6 +54,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
             content_length -= len(self.data)
         
         response = paths.handlePath(self, headers["Path"].value, headers, body)
+        print(response)
         self.request.sendall(response)
         
         if headers["Path"].value == "/websocket":

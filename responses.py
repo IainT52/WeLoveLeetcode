@@ -1,4 +1,6 @@
 import hashlib, base64, re, secrets
+from database import tokens
+
 
 def handleFileResponse(file, status, content_type):
     file = open(file, "r").read()
@@ -84,7 +86,6 @@ def parseVariableTemplates(variable, data):
     return data[variable[0]][0]
 
 
-tokens = set()
 def generateXSRFToken():
     token = secrets.token_hex(16)
     tokens.add(token)

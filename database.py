@@ -1,11 +1,14 @@
 import mysql.connector
 from auth import encrypt
 
+
+tokens = set()
+
 database = mysql.connector.connect(
     # host="mysql",
     user="root",
-    password="cse312homework",
-    database="canvas"
+    password="1F900b8b3d52;",
+    database="312db"
 )
 
 mycursor = database.cursor(prepared=True)
@@ -19,17 +22,15 @@ def register(username, password):
         command = "SELECT * FROM registration WHERE username = (?)"
         mycursor.execute(command, (username,))
         fetch = mycursor.fetchall()
+
         if fetch == []:
             command = "INSERT INTO registration (username, password) VALUES (?, ?)"
             value = (username, hashed, )
             mycursor.execute(command, value)
             database.commit()
-            print("Registration complete!")
             return True
-        else: 
-            print("Username already exists")
-            return False
-    else: return False
+    
+    return False
     
 def login(username, password):
     command = "SELECT * FROM registration WHERE username = (?)"
@@ -37,5 +38,6 @@ def login(username, password):
     fetch = mycursor.fetchall()
     if fetch == []:
         return False
+    
     hashed = fetch[0][2]
     return encrypt.verify(password, hashed)

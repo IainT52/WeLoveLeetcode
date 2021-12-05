@@ -11,7 +11,7 @@ def closeWebSocketConnection(self):
 def decodeFrame(self, frame):
     fin_opcode = bin(frame[0])[2:]  # 0b01000010 (splice from 2 to skip '0b')
     fin, rsv, opcode = fin_opcode[0], fin_opcode[1:4], fin_opcode[4:8]
-    print(opcode)
+    
     if opcode == '1000':
         closeWebSocketConnection(self)
         return bytearray("CONNECTION CLOSED".encode())
@@ -19,6 +19,7 @@ def decodeFrame(self, frame):
     if payload_len == 126:  # 126 bytes <= len < 65536 bytes
         payload_len = int.from_bytes(frame[2:4], 'big')  # next 16 bits (2 bytes) represents payload len
         return decodeLargeFrame(frame, payload_len)
+    
     mask = frame[2:6]
     encrypted_payload = frame[6:(6 + payload_len)]
     payload = bytearray([encrypted_payload[i] ^ mask[i % 4] for i in range(payload_len)])
@@ -35,7 +36,6 @@ def decodeLargeFrame(frame, payload_len):
 
 # sends message to all clients, clients are added to this list on connection
 def broadcast(sender, message):
-    print("len clients: ", len(clients))
     for client in clients:
         try:
             if client == sender:
@@ -62,7 +62,6 @@ def sendFrame(self, payload):
 
 # sends websocket frame containing payload of 126 <= len < 65536
 def sendLargeFrame(self, payload):
-    print("len: ", len(payload))
     frame = [129]  # fin: 1, opcode: 0x1 (10000001)
     frame += [126]  # mask bit: 0, len: 126 (01111110)
     frame += [(len(payload) >> 8) & 255]  # right shift to fill bits 8-15 (ext. payload is 16 bits)

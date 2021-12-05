@@ -28,31 +28,27 @@ def handlePath( path, headers):
     return paths[path]
 
 
+
 def handleForms(parsed_body):
-    form = {}
     token = (parsed_body["xsrf_token"][0].decode()).strip('\r\n')
     if token not in tokens:
         return responses.handleTextResponse("Forbidden", "403 Forbidden")
-
     
     if "register-username" in parsed_body:
         username = parsed_body["register-username"][0].decode().strip("\r\n")
         password = parsed_body["register-password"][0].decode().strip("\r\n")
-
-        if verifyPassword(password):
-            password, salt = hashPassword(password)
-            register(username, password.decode(), salt.decode())
+        if register(username, password):
+            return responses.parseHtml(getRelativePath("templates/index.html"), {"register_success": ["Success! Please Log in"]})
         else:
-            return responses.parseHtml("index.html", {"register_success": ["Invalid Password"], "visits": [str(num_visits)]}, num_visits)
+            return responses.parseHtml(getRelativePath("templates/index.html"), {"register_success": ["Registration failed, please check password requirements!"]})
     
     if "login-username" in parsed_body:
         username = parsed_body["login-username"][0].decode().strip("\r\n")
         password = parsed_body["login-password"][0].decode().strip("\r\n")
 
         if login(username, password):
-            return responses.parseHtml("index.html", {"login_success": ["Valid"], "visits": [str(num_visits)]}, num_visits)
+            return responses.parseHtml(getRelativePath("templates/canvas.html"), {})
         else:
-            return responses.parseHtml("index.html", {"login_success": ["Invalid"], "visits": [str(num_visits)]}, num_visits)
+            return responses.parseHtml(getRelativePath("templates/index.html"), {"login_success": ["Invalid"]})
     
-    database["forms"].append(form)
     return responses.handleRedirect("/")

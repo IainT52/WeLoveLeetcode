@@ -1,5 +1,6 @@
 import responses, os
 from database import *
+from websockets import logged_in
 
 cur_dir = os.path.dirname(__file__)
 def getRelativePath(path):
@@ -47,7 +48,9 @@ def handleForms(parsed_body):
         password = parsed_body["login-password"][0].decode().strip("\r\n")
 
         if login(username, password):
-            return responses.parseHtml(getRelativePath("templates/canvas.html"), {})
+            logged_in.append(username)
+            variables = {"account": [username], "users_list": [user for user in logged_in if user != username]}
+            return responses.parseHtml(getRelativePath("templates/canvas.html"), variables)
         else:
             return responses.parseHtml(getRelativePath("templates/index.html"), {"login_success": ["Invalid"]})
     

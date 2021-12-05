@@ -59,7 +59,7 @@ def parseHeader(header_data, hasRequestLine):
 class RequestHandler(socketserver.BaseRequestHandler):
     def handle(self):
         self.data = self.request.recv(2048)
-        print(f"\n-------------- Request recieved from {self.client_address} -----------------\n")
+        print(f"\n-------------- Request recieved from {self.client_address} --------------\n")
         
         header_data, body = self.data.split("\r\n\r\n".encode('utf-8'), 1)
         headers = parseHeader(header_data, True)

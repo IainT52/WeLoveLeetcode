@@ -59,12 +59,6 @@ var clicking = false
 resize()
 
 
-window.setInterval(function(){
-    let img = ctx.getImageData(0, 0, canvas.width(), canvas.height())
-    console.log(img)
-}, 6000)
-
-
 // Event listeners
 canvas.mousedown(e => {setPosition(e), clicking = true})
 canvas.mousemove(draw)

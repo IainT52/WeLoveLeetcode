@@ -124,23 +124,3 @@ def openSocketConnection(self):
         broadcast(self, message)
 
     return
-
-# if request_line[1] == '/websocket':
-#     # Perform WebSocket Handshake...
-#     key = headers.get('Sec-WebSocket-Key', None)
-#     ws_response = webSocketHandshake(key)
-#     self.request.send(ws_response.encode())
-#     clients.append(self)
-#     self.loadChatHistory()  # New connection... send chat history
-
-#     while True:
-#         frame = bytearray(self.request.recv(1024).strip())
-#         payload = decodeFrame(frame)
-#         decoded_payload = json.loads(payload.decode())  # 'utf-8'
-#         html_safe_dict = {htmlSafe(k): htmlSafe(v) for k, v in decoded_payload.items()}
-#         safe_json = json.dumps(html_safe_dict)
-#         message = bytearray(json.dumps(html_safe_dict).encode())
-#         if safe_json not in session_messages:
-#             saveMessage(safe_json)  # save message to database
-#             session_messages.add(safe_json)  # add to the set
-#         broadcast(message)  # send message frame to all open websockets

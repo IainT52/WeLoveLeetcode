@@ -1,7 +1,7 @@
 function createUser() {
     const username = document.getElementById("create-username");
     const password = document.getElementById("create-password");
- 
+    console.log(password, username)
 
     data = {
         'username': username.value,

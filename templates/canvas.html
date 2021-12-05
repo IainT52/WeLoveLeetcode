@@ -18,6 +18,10 @@
         <div class="user-table">
             Users
             <hr>
+            You: {{account}} <br/>
+            {{for user in users_list}}
+                {{user}} <br />
+            {{endfor}}
         </div>
         <canvas id="drawing-board"></canvas>
     </div>

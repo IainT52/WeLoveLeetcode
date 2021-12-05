@@ -1,10 +1,15 @@
 import json, hashlib  # hashlib (SHA-1) needed for websockets
 from base64 import b64encode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
+logged_in = []  # usernames... client idx corresponds to username idx
 
 # removes client object from clients list
 def closeWebSocketConnection(self):
-    clients.remove(self)
+    idx = clients.index(self)
+    clients.pop(idx)
+    print(f"{logged_in.pop(idx)} logged out")
+    # update logged in
+    return
 
 
 # decodes websocket frame (input is bytearray) with len < 126
@@ -15,6 +20,7 @@ def decodeFrame(self, frame):
     if opcode == '1000':
         closeWebSocketConnection(self)
         return bytearray("CONNECTION CLOSED".encode())
+
     payload_len = frame[1] - 128  # we can assume mask bit is 1, so subtract it off
     if payload_len == 126:  # 126 bytes <= len < 65536 bytes
         payload_len = int.from_bytes(frame[2:4], 'big')  # next 16 bits (2 bytes) represents payload len

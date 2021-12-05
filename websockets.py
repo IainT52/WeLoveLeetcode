@@ -3,11 +3,17 @@ from base64 import b64encode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
 
 
+def closeWebSocketConnection(self):
+    clients.remove(self)
 
 # decodes websocket frame (input is bytearray) with len < 126
-def decodeFrame(frame):
+def decodeFrame(self, frame):
     fin_opcode = bin(frame[0])[2:]  # 0b01000010 (splice from 2 to skip '0b')
     fin, rsv, opcode = fin_opcode[0], fin_opcode[1:4], fin_opcode[4:8]
+    print(opcode)
+    if opcode == '1000':
+        closeWebSocketConnection(self)
+        return "CONNECTION CLOSED"
     payload_len = frame[1] - 128  # we can assume mask bit is 1, so subtract it off
     if payload_len == 126:  # 126 bytes <= len < 65536 bytes
         payload_len = int.from_bytes(frame[2:4], 'big')  # next 16 bits (2 bytes) represents payload len
@@ -71,10 +77,14 @@ def openSocketConnection(self):
 
     while True:
         frame = bytearray(self.request.recv(1024))
-        payload = decodeFrame(frame)
+        payload = decodeFrame(self, frame)
+        if payload == "CONNECTION CLOSED":
+            break
         decoded_payload = json.loads(payload.decode())  # 'utf-8'
         message = bytearray(json.dumps(decoded_payload).encode())
         broadcast(self, message)
+        
+    return
 
 # if request_line[1] == '/websocket':
 #     # Perform WebSocket Handshake...

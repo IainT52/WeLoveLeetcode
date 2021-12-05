@@ -1,5 +1,6 @@
 import paths, socketserver, json
 from websockets import openSocketConnection
+from database import *
 
 class Header:
     def __init__(self, type, value, extra):
@@ -53,7 +54,11 @@ class RequestHandler(socketserver.BaseRequestHandler):
             content_length -= len(self.data)
         
         if headers["Request-Type"].value == "POST":
-            pass
+            if headers["Path"].value == "/account":
+                account_info = json.loads(body.decode())
+                username = account_info['username']
+                password = account_info['password']
+                print(register(username, password))
         elif headers["Request-Type"].value == "PUT":
             pass
         elif headers["Request-Type"].value == "DELETE":

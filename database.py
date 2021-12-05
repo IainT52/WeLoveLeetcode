@@ -2,9 +2,9 @@ import mysql.connector
 from auth import encrypt
 
 database = mysql.connector.connect(
-    host="mysql",
+    # host="mysql",
     user="root",
-    password="mysql",
+    password="cse312homework",
     database="canvas"
 )
 

@@ -2,9 +2,10 @@ import json, hashlib  # hashlib (SHA-1) needed for websockets
 from base64 import b64encode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
 
-
+# removes client object from clients list
 def closeWebSocketConnection(self):
     clients.remove(self)
+
 
 # decodes websocket frame (input is bytearray) with len < 126
 def decodeFrame(self, frame):
@@ -47,7 +48,6 @@ def broadcast(sender, message):
 
 # sends websocket frame containing payload of len < 126
 def sendFrame(self, payload):
-    print("sending frame?")
     if len(payload) > 125:
         frame_to_send = self.sendLargeFrame(payload)
         self.request.sendall(frame_to_send)
@@ -73,7 +73,7 @@ def sendLargeFrame(self, payload):
 
 def openSocketConnection(self):
     clients.append(self)
-    # send drawing here? 
+    # SEND CURRENT CANVAS TO NEWLY CONNECTED CLIENT
 
     while True:
         frame = bytearray(self.request.recv(1024))

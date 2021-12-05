@@ -15,12 +15,10 @@ function createUser() {
         }
     };
     request.open("POST", "/account");
-    request.send(data);
-    console.log(data['username'])
-    request.open("POST", "/account");
     request.send(JSON.stringify(data));
     request.onload = function () {
         createDiv = document.getElementById('create');
+        console.log("response received")
         if (request.status == 200) {
             createDiv.innerHTML = '<br /><h2 style="color:green"><i>Account ' + data['username'] + ' created successfully</i></h2>'
         } else {
@@ -47,7 +45,6 @@ function loginUser() {
             console.log("trying to send account info...")
         }
     };
-    console.log(data['username'])
     request.open("POST", "/account");
     request.send(JSON.stringify(data));
     request.onload = function () {

@@ -13,13 +13,14 @@ def parseHeader(header_data, hasRequestLine):
     headers = {}
     start = 0
     header_data = header_data.decode("utf-8").split("\r\n")
-    
+
     # Parse request line
     if hasRequestLine:
         start = 1
         request_type, path, version = header_data[0].split(" ")
         headers = {"Request-Type": Header("Request-Type", request_type, {}), "Path": Header("Path", path, {}), "Version": Header("Version", version, {}), "Content-Length": Header("Content-Length", 0, {})}
 
+    print("PATH: ", headers["Path"].value)
     # Parse headers and build key value mapping
     for i in range(start, len(header_data)):
         cur_header = header_data[i]

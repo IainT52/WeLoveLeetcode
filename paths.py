@@ -29,12 +29,19 @@ def handlePath(client, path, headers, body):
             password = account_info['password']
             if account_info['create']:
                 success = register(username, password)
-                client.request.sendall(responses.handleTextResponse("Success", "200 OK"))
-                return responses.handleRedirect("templates\index.html")
+                if success:
+                    return responses.handleTextResponse("Success", "200 OK")
+                else: 
+                    return responses.handleTextResponse("Failure", "200 OK")
+
             else:
                 success = login(username, password)
-                client.request.sendall(responses.handleTextResponse("Success", "200 OK"))
-                return responses.handleRedirect("templates\canvas.html") if success else responses.handleRedirect("templates\index.html")
+                if success:
+                    client.request.sendall(responses.handleTextResponse("Success", "200 OK"))
+                    return responses.handleRedirect("templates\canvas.html")
+                else:
+                    return responses.handleTextResponse("Failure", "200 OK")
+                
 
         
     elif headers["Request-Type"].value == "PUT":

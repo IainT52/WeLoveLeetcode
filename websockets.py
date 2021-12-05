@@ -1,7 +1,16 @@
-import json, hashlib  # hashlib (SHA-1) needed for websockets
-from base64 import b64encode  # base64 for websockets
+import json
+import hashlib  # hashlib (SHA-1) needed for websockets
+from base64 import b64encode, decode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
 logged_in = []  # usernames... client idx corresponds to username idx
+
+
+# returns a string with html characters encoded
+def htmlSafe(string):
+    string = string.replace('&', '&amp;').replace(
+        '<', '&lt;').replace('>', '&gt;')
+    return string
+
 
 # removes client object from clients list
 def closeWebSocketConnection(self):
@@ -16,19 +25,22 @@ def closeWebSocketConnection(self):
 def decodeFrame(self, frame):
     fin_opcode = bin(frame[0])[2:]  # 0b01000010 (splice from 2 to skip '0b')
     fin, rsv, opcode = fin_opcode[0], fin_opcode[1:4], fin_opcode[4:8]
-    
+
     if opcode == '1000':
         closeWebSocketConnection(self)
         return bytearray("CONNECTION CLOSED".encode())
 
-    payload_len = frame[1] - 128  # we can assume mask bit is 1, so subtract it off
+    # we can assume mask bit is 1, so subtract it off
+    payload_len = frame[1] - 128
     if payload_len == 126:  # 126 bytes <= len < 65536 bytes
-        payload_len = int.from_bytes(frame[2:4], 'big')  # next 16 bits (2 bytes) represents payload len
+        # next 16 bits (2 bytes) represents payload len
+        payload_len = int.from_bytes(frame[2:4], 'big')
         return decodeLargeFrame(frame, payload_len)
-    
+
     mask = frame[2:6]
     encrypted_payload = frame[6:(6 + payload_len)]
-    payload = bytearray([encrypted_payload[i] ^ mask[i % 4] for i in range(payload_len)])
+    payload = bytearray([encrypted_payload[i] ^ mask[i % 4]
+                        for i in range(payload_len)])
     return payload
 
 
@@ -36,7 +48,8 @@ def decodeFrame(self, frame):
 def decodeLargeFrame(frame, payload_len):
     mask = frame[4:8]
     encrypted_payload = frame[8:(8 + payload_len)]
-    payload = bytearray([encrypted_payload[i] ^ mask[i % 4] for i in range(payload_len)])
+    payload = bytearray([encrypted_payload[i] ^ mask[i % 4]
+                        for i in range(payload_len)])
     return payload
 
 
@@ -48,7 +61,8 @@ def broadcast(sender, message):
                 continue
             sendFrame(client, message)
         except Exception as e:
-            pass  # if client disconnects, we still try sending msg (causing an error)
+            # if client disconnects, we still try sending msg (causing an error)
+            pass
     return
 
 
@@ -70,7 +84,8 @@ def sendFrame(self, payload):
 def sendLargeFrame(self, payload):
     frame = [129]  # fin: 1, opcode: 0x1 (10000001)
     frame += [126]  # mask bit: 0, len: 126 (01111110)
-    frame += [(len(payload) >> 8) & 255]  # right shift to fill bits 8-15 (ext. payload is 16 bits)
+    # right shift to fill bits 8-15 (ext. payload is 16 bits)
+    frame += [(len(payload) >> 8) & 255]
     frame += [len(payload) & 255]  # now fill first 8 bits (255 -> 11111111)
     frame_to_send = bytearray(frame) + payload
     return frame_to_send
@@ -86,6 +101,25 @@ def openSocketConnection(self):
         if payload.decode() == "CONNECTION CLOSED":
             break
         decoded_payload = json.loads(payload.decode())  # 'utf-8'
+        if 'recipient' and 'message' in decoded_payload:
+            recipient_name = decoded_payload['recipient']
+            if recipient_name in logged_in:
+                recipient_idx = logged_in.index(recipient_name)
+                recipient = clients[recipient_idx]
+            else:  # send error message to sender, recipient doesn't exist
+                recipient_idx = clients.index(self)
+                recipient = clients[recipient_idx]
+                # set recipient name to self, actual recipient DNE
+                decoded_payload['recipient'] = logged_in[recipient_idx]
+
+            sender_name = logged_in[clients.index(self)]
+            decoded_payload['sender'] = sender_name
+            safe_payload = {htmlSafe(k): htmlSafe(v)
+                            for k, v in decoded_payload.items()}
+            sendFrame(recipient, bytearray(
+                json.dumps(safe_payload).encode()))
+            continue  # not a coordinate, dont execute rest of while loop
+
         message = bytearray(json.dumps(decoded_payload).encode())
         broadcast(self, message)
 

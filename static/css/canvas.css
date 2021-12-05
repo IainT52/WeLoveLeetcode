@@ -22,6 +22,18 @@ body {
     background-color: white;
 }
 
+#dm-chat {
+    text-align: center;
+    width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-bottom: 5%;
+    display: block;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
 .user-table {
     height: 100%;
     width: 20%;

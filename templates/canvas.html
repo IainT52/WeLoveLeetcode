@@ -26,7 +26,17 @@
         <canvas id="drawing-board"></canvas>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>\
+    <div id="dm-chat">
+        <center>Send message to user...</center><br />
+        <label for="recipient"></label>
+        <input id="recipient" type="text" name="name" placeholder="Recipient"><br />
+        <label for="msg"></label>
+        <input id="msg" type="text" name="comment" placeholder="Message"><br />
+        <button onclick="sendMessage()">Send</button>
+        <div id='direct-messages'></div>
+    </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"

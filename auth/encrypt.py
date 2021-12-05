@@ -32,7 +32,8 @@ def encrypt(password):
         return hashed
     else:
         print("Password did not meet at least one of the five requirements.")
+        return False
 
 
 def verify(password, hashed):
-    return bcrypt.checkpw(password.encode(), hashed)
+    return bcrypt.checkpw(password.encode('utf-8'), hashed('utf-8'))

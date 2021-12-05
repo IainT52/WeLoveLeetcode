@@ -64,8 +64,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
         self.request.sendall(response)
         
         if headers["Path"].value == "/websocket":
-            key = headers["Sec-WebSocket-Key"].value
-            openSocketConnection(self, key)
+            openSocketConnection(self)  # handshake is complete before this function call
             
         self.request.close()
         return

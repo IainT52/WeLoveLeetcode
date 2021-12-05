@@ -38,6 +38,7 @@ def broadcast(message):
 
 # sends websocket frame containing payload of len < 126
 def sendFrame(self, payload):
+    print("sending frame?")
     if len(payload) > 125:
         frame_to_send = self.sendLargeFrame(payload)
         self.request.sendall(frame_to_send)
@@ -61,16 +62,16 @@ def sendLargeFrame(self, payload):
     return frame_to_send
 
 
-def openSocketConnection(self, key):
+def openSocketConnection(self):
     clients.append(self)
     # send drawing here? 
 
     while True:
-        frame = bytearray(self.request.recv(1024).strip())
+        frame = bytearray(self.request.recv(1024))
         payload = decodeFrame(frame)
         decoded_payload = json.loads(payload.decode())  # 'utf-8'
-        message = bytearray(json.dumps(decoded_payload).encode())
-        broadcast(message)
+        # message = bytearray(json.dumps(decoded_payload).encode())
+        # broadcast(message)c
 
 # if request_line[1] == '/websocket':
 #     # Perform WebSocket Handshake...

@@ -11,17 +11,15 @@ paths = {
     "/static/css/canvas.css": responses.handleFileResponse(getRelativePath("static/css/canvas.css"), "200 OK", "text/css"),
     "/static/js/canvas.js": responses.handleFileResponse(getRelativePath("static/js/canvas.js"), "200 OK", "text/javascript"),
     "/static/js/reglog.js": responses.handleFileResponse(getRelativePath("static/js/reglog.js"), "200 OK", "text/javascript"),
-    "/account": ""
+    "/account": "",
+    "/templates/canvas.html": responses.handleFileResponse(getRelativePath("templates/canvas.html"), "200 OK", "text/html"),
 }
 
 
 def handlePath( path, headers):
-    global num_visits
-    print("test", path)
     if path not in paths:
         return responses.handleTextResponse("The resource requested cannot be found in this server!", "404 Not Found")
-
-
+    
     if path == "/":
         return responses.parseHtml(getRelativePath("templates\index.html"), {})
     elif path == "/websocket":

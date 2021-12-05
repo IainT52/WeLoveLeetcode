@@ -16,15 +16,15 @@ function createUser() {
     };
     request.open("POST", "/account");
     request.send(JSON.stringify(data));
-    request.onload = function () {
-        createDiv = document.getElementById('create');
-        console.log("response received")
-        if (request.status == 200) {
-            createDiv.innerHTML = '<br /><h2 style="color:green"><i>Account ' + data['username'] + ' created successfully</i></h2>'
-        } else {
-            createDiv.innerHTML = '<br /><h2 style="color:red"><i>' + request.responseText + '</i></h2>'
-        }
-    }
+    // request.onload = function () {
+    //     createDiv = document.getElementById('create');
+    //     console.log("response received")
+    //     if (request.status == 200) {
+    //         createDiv.innerHTML = '<br /><h2 style="color:green"><i>Account ' + data['username'] + ' created successfully</i></h2>'
+    //     } else {
+    //         createDiv.innerHTML = '<br /><h2 style="color:red"><i>' + request.responseText + '</i></h2>'
+    //     }
+    // }
     // Clear the form inputs
     username.value = "";
     password.value = "";

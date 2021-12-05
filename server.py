@@ -81,7 +81,6 @@ class RequestHandler(socketserver.BaseRequestHandler):
         else:
             response = paths.handlePath(headers["Path"].value, headers)
         
-
         self.request.sendall(response)
         
         if headers["Path"].value == "/websocket":

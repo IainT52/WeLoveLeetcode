@@ -36,4 +36,4 @@ def encrypt(password):
 
 
 def verify(password, hashed):
-    return bcrypt.checkpw(password.encode('utf-8'), hashed('utf-8'))
+    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))

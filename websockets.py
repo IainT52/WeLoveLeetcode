@@ -13,7 +13,7 @@ def decodeFrame(self, frame):
     print(opcode)
     if opcode == '1000':
         closeWebSocketConnection(self)
-        return "CONNECTION CLOSED"
+        return bytearray("CONNECTION CLOSED".encode())
     payload_len = frame[1] - 128  # we can assume mask bit is 1, so subtract it off
     if payload_len == 126:  # 126 bytes <= len < 65536 bytes
         payload_len = int.from_bytes(frame[2:4], 'big')  # next 16 bits (2 bytes) represents payload len
@@ -78,12 +78,12 @@ def openSocketConnection(self):
     while True:
         frame = bytearray(self.request.recv(1024))
         payload = decodeFrame(self, frame)
-        if payload == "CONNECTION CLOSED":
+        if payload.decode() == "CONNECTION CLOSED":
             break
         decoded_payload = json.loads(payload.decode())  # 'utf-8'
         message = bytearray(json.dumps(decoded_payload).encode())
         broadcast(self, message)
-        
+
     return
 
 # if request_line[1] == '/websocket':

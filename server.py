@@ -1,5 +1,5 @@
 import paths, socketserver
-from websockets import openSocketConnection
+from websockets import openSocketConnection  # this is NOT a python library, this is OUR CODE
 
 class Header:
     def __init__(self, type, value, extra):

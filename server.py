@@ -8,6 +8,25 @@ class Header:
         self.extra = extra
 
 
+def parseBody(body_data, headers):
+    content_type = headers["Content-Type"]
+    parsed_body = {}
+
+    if content_type.value == "multipart/form-data":
+        boundary = ("--" + content_type.extra["boundary"] + "\r\n").encode('utf-8')
+        body = body_data.split(boundary)
+        body[-1] = body[-1][:-1*len(("--" + content_type.extra["boundary"] + "--\r\n").encode('utf-8'))] 
+        body.pop(0)
+        
+        for content in body:
+            header_data, data = content.split("\r\n\r\n".encode('utf-8'))
+            headers = parseHeader(header_data, False)
+            name = (headers["Content-Disposition"].extra["name"]).strip('"')
+            parsed_body[name] = (data, headers)
+    
+    return paths.handleForms(parsed_body)
+
+
 def parseHeader(header_data, hasRequestLine):
     extra_types = {"Content-Disposition", "Content-Type"}
     headers = {}
@@ -20,7 +39,6 @@ def parseHeader(header_data, hasRequestLine):
         request_type, path, version = header_data[0].split(" ")
         headers = {"Request-Type": Header("Request-Type", request_type, {}), "Path": Header("Path", path, {}), "Version": Header("Version", version, {}), "Content-Length": Header("Content-Length", 0, {})}
 
-    print("PATH: ", headers["Path"].value)
     # Parse headers and build key value mapping
     for i in range(start, len(header_data)):
         cur_header = header_data[i]
@@ -52,8 +70,18 @@ class RequestHandler(socketserver.BaseRequestHandler):
             self.data = self.request.recv(2048)
             body += self.data
             content_length -= len(self.data)
+
+
+        if headers["Request-Type"].value == "POST":
+            response = parseBody(body, headers)
+        elif headers["Request-Type"].value == "PUT":
+            pass
+        elif headers["Request-Type"].value == "DELETE":
+            pass
+        else:
+            response = paths.handlePath(headers["Path"].value, headers)
         
-        response = paths.handlePath(self, headers["Path"].value, headers, body)
+
         self.request.sendall(response)
         
         if headers["Path"].value == "/websocket":

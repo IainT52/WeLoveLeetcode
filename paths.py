@@ -1,4 +1,4 @@
-import responses, os, json
+import responses, os
 from database import *
 
 cur_dir = os.path.dirname(__file__)
@@ -15,41 +15,12 @@ paths = {
 }
 
 
-def handlePath(client, path, headers, body):
+def handlePath( path, headers):
     global num_visits
     print("test", path)
     if path not in paths:
         return responses.handleTextResponse("The resource requested cannot be found in this server!", "404 Not Found")
 
-
-    if headers["Request-Type"].value == "POST":
-        if headers["Path"].value == "/account":
-            account_info = json.loads(body.decode())
-            username = account_info['username']
-            password = account_info['password']
-            if account_info['create']:
-                success = register(username, password)
-                if success:
-                    return responses.handleTextResponse("Success", "200 OK")
-                else: 
-                    return responses.handleTextResponse("Failure", "200 OK")
-
-            else:
-                success = login(username, password)
-                if success:
-                    client.request.sendall(responses.handleTextResponse("Success", "200 OK"))
-                    return responses.handleRedirect("templates\canvas.html")
-                else:
-                    return responses.handleTextResponse("Failure", "200 OK")
-                
-
-        
-    elif headers["Request-Type"].value == "PUT":
-        pass
-
-    elif headers["Request-Type"].value == "DELETE":
-        pass
-    
 
     if path == "/":
         return responses.parseHtml(getRelativePath("templates\index.html"), {})
@@ -57,3 +28,33 @@ def handlePath(client, path, headers, body):
         return responses.handleSocketHandshake(path, headers)
     
     return paths[path]
+
+
+def handleForms(parsed_body):
+    form = {}
+    token = (parsed_body["xsrf_token"][0].decode()).strip('\r\n')
+    if token not in tokens:
+        return responses.handleTextResponse("Forbidden", "403 Forbidden")
+
+    
+    if "register-username" in parsed_body:
+        username = parsed_body["register-username"][0].decode().strip("\r\n")
+        password = parsed_body["register-password"][0].decode().strip("\r\n")
+
+        if verifyPassword(password):
+            password, salt = hashPassword(password)
+            register(username, password.decode(), salt.decode())
+        else:
+            return responses.parseHtml("index.html", {"register_success": ["Invalid Password"], "visits": [str(num_visits)]}, num_visits)
+    
+    if "login-username" in parsed_body:
+        username = parsed_body["login-username"][0].decode().strip("\r\n")
+        password = parsed_body["login-password"][0].decode().strip("\r\n")
+
+        if login(username, password):
+            return responses.parseHtml("index.html", {"login_success": ["Valid"], "visits": [str(num_visits)]}, num_visits)
+        else:
+            return responses.parseHtml("index.html", {"login_success": ["Invalid"], "visits": [str(num_visits)]}, num_visits)
+    
+    database["forms"].append(form)
+    return responses.handleRedirect("/")

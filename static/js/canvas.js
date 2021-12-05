@@ -15,10 +15,19 @@ function sendCoordinate(pos) {
     socket.send(JSON.stringify(pos))
 }
 
-
+var mouseUp = false
 // Called when the server sends a new coordinate over the WebSocket and draw it to the canvas
 function updateCanvas(message) {
     let coordinate = JSON.parse(message.data)
+    if (coordinate.x === -1 && coordinate.y == -1){
+        mouseUp = true
+        return
+    }
+    if (mouseUp){
+        setPosition(coordinate.x, coordinate.y)
+        mouseUp = false
+        return
+    }
     ctx.beginPath()
 
     ctx.lineWidth = 1
@@ -62,7 +71,7 @@ resize()
 // Event listeners
 canvas.mousedown(e => {setPosition(e), clicking = true})
 canvas.mousemove(draw)
-canvas.mouseup(e => clicking = false)
+canvas.mouseup(e => {sendCoordinate({x:-1, y:-1}), clicking = false})
 canvas.mouseout(e => clicking = false)
 $( window ).resize(resize)
 

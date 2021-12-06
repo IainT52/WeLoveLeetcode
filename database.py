@@ -15,7 +15,7 @@ mycursor = database.cursor(prepared=True)
 
 mycursor.execute("CREATE TABLE IF NOT EXISTS registration (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, UNIQUE (username))")
 mycursor.execute("CREATE TABLE IF NOT EXISTS cookie_jar (id INT AUTO_INCREMENT PRIMARY KEY, token VARCHAR(255) NOT NULL, username VARCHAR(255) NOT NULL, UNIQUE (username))")
-mycursor.execute("CREATE TABLE IF NOT EXISTS gallery (id INT AUTO_INCREMENT PRIMARY, username VACHAR(255) NOT NULL, image BLOB)")
+mycursor.execute("CREATE TABLE IF NOT EXISTS gallery (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, image BLOB)")
 
 def paint(username, image):
     command = "SELECT * FROM registration WHERE username = (?)"

@@ -11,14 +11,21 @@
         integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="static/css/canvas.css">
 </head>
-
+<section>
 <body>
-
+    <div id ="accountName">
+        Account: {{account}}
+    </div>
+    <div id="progressbar"></div>
+    <div id="scrollPath"></div>
     <div class="canvas-container">
         <div class="user-table">
+            <div id = "test">
+                {{account}}
+                <hr style="height:2px;border-width:0;color:black;background-color:black">
+            </div>
             Users
-            <hr>
-            You: {{account}} <br/>
+            <br/>
             {{for user in users_list}}
                 {{user}} <br />
             {{endfor}}
@@ -50,6 +57,14 @@
         integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossorigin="anonymous"></script>
     <script src="static/js/canvas.js"></script>
+    <script type="text/javascript">
+        let progress = document.getElementById('progressbar');
+        let totalHeight = document.body.scrollHeight - window.innerHeight;
+        window.onscroll = function(){
+            let progressHeight = (window.pageYOffset / totalHeight) * 100;
+            progress.style.height = progressHeight + "%";
+        }
+    </script>
 </body>
-
+</section>
 </html>

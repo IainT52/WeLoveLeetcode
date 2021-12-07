@@ -24,11 +24,11 @@ def handleSocketHandshake(path, headers):
     return f"HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: {accept_response}\r\nX-Content-Type-Options: nosniff\r\n\r\n".encode()
 
 
-def parseHtml(file, data):
+def parseHtml(file, data, auth_token):
     file = open(file, "r").read()
     file = file.split("\n")
     file = replaceTemplate(file, 0, len(file), data)
-    return f"HTTP/1.1 200\r\nContent-Type: text/html\r\nContent-Length: {len(file)}\r\nX-Content-Type-Options: nosniff\r\n\r\n{file}".encode()
+    return f"HTTP/1.1 200\r\nContent-Type: text/html\r\nContent-Length: {len(file)}\r\nX-Content-Type-Options: nosniff\r\nSet-Cookie: auth={auth_token}; Max-Age=3600; HttpOnly; SameSite=Lax\r\n\r\n{file}".encode()
 
 
 

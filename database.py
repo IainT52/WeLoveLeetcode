@@ -6,8 +6,8 @@ tokens = set()
 database = mysql.connector.connect(
     # host="mysql",
     user="root",
-    password="cse312homework",
-    database="canvas"
+    password="1F900b8b3d52;",
+    database="312db"
 )
 # iain db 312db pass 1F900b8b3d52;
 # nick pass cse312homework

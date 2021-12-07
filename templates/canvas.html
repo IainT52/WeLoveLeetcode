@@ -24,10 +24,18 @@
             {{endfor}}
         </div>
         <canvas id="drawing-board"></canvas>
+
+        <div class="user-table">
+            Choose your color:
+            <hr>
+            <input type="color" id="ctx-color"
+                value="#000000">
+            <label for="head">Color</label>
+        </div>
     </div>
 
     <div id="dm-chat">
-        <center>Send message to user...</center><br />
+        <p>Send message to user...</p> <br/>
         <label for="recipient"></label>
         <input id="recipient" type="text" name="name" placeholder="Recipient"><br />
         <label for="msg"></label>

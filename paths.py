@@ -1,4 +1,4 @@
-import responses, os
+import responses, os, cookies
 from database import *
 from websockets import logged_in
 
@@ -22,7 +22,7 @@ def handlePath( path, headers):
         return responses.handleTextResponse("The resource requested cannot be found in this server!", "404 Not Found")
     
     if path == "/":
-        return responses.parseHtml(getRelativePath("templates\index.html"), {})
+        return responses.parseHtml(getRelativePath("templates\index.html"), {}, "")
     elif path == "/websocket":
         return responses.handleSocketHandshake(path, headers)
     
@@ -39,9 +39,9 @@ def handleForms(parsed_body):
         username = parsed_body["register-username"][0].decode().strip("\r\n")
         password = parsed_body["register-password"][0].decode().strip("\r\n")
         if register(username, password):
-            return responses.parseHtml(getRelativePath("templates/index.html"), {"register_success": ["Success! Please Log in"]})
+            return responses.parseHtml(getRelativePath("templates/index.html"), {"register_success": ["Success! Please Log in"]}, "")
         else:
-            return responses.parseHtml(getRelativePath("templates/index.html"), {"register_success": ["Registration failed, please check password requirements!"]})
+            return responses.parseHtml(getRelativePath("templates/index.html"), {"register_success": ["Registration failed, please check password requirements!"]}, "")
     
     if "login-username" in parsed_body:
         username = parsed_body["login-username"][0].decode().strip("\r\n")
@@ -50,8 +50,9 @@ def handleForms(parsed_body):
         if login(username, password):
             logged_in.append(username)
             variables = {"account": [username], "users_list": [user for user in logged_in if user != username]}
-            return responses.parseHtml(getRelativePath("templates/canvas.html"), variables)
+            auth_token = cookies.cookie_tokenizer(username)
+            return responses.parseHtml(getRelativePath("templates/canvas.html"), variables, auth_token)
         else:
-            return responses.parseHtml(getRelativePath("templates/index.html"), {"login_success": ["Invalid"]})
+            return responses.parseHtml(getRelativePath("templates/index.html"), {"login_success": ["Invalid"]}, "")
     
     return responses.handleRedirect("/")

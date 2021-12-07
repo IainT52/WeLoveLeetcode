@@ -1,9 +1,9 @@
 import hashlib
 import secrets
-from auth import encrypt
+import database
 
 def cookie_tokenizer(username):
     secret_token = secrets.token_hex(16)
-    token = hashlib.md5(secret_token.encode().hexdigest())
-    encrypt.tokenize(token, username)
+    token = hashlib.md5(secret_token.encode()).hexdigest()
+    database.tokenize(token, username)
     return token

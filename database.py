@@ -6,10 +6,10 @@ tokens = set()
 default_images = ["static/images/deer.jpg", "static/images/eagle.jpg", "static/images/whale.jpg"]
 
 database = mysql.connector.connect(
-    # host="mysql",
+    host="mysql",
     user="root",
-    password="1F900b8b3d52;",
-    database="312db"
+    password="cse312homework",
+    database="canvas"
 )
 
 mycursor = database.cursor(prepared=True)

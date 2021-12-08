@@ -14,14 +14,14 @@
 <section>
 <body>
     <div id ="accountName">
-        Account: {{account.username}}
+        <img src="{{account.photo}}" alt="profile-photo" class="user-image"/> Account: {{account.username}}
     </div>
     <div id="progressbar"></div>
     <div id="scrollPath"></div>
     <div class="canvas-container">
         <div class="user-table">
             <div id = "test">
-                Me: {{account.username}}
+                Me: <img src="{{account.photo}}" alt="profile-photo" class="user-image"/> {{account.username}}
                 <hr style="height:2px;border-width:0;color:black;background-color:black">
             </div>
             Users
@@ -41,8 +41,17 @@
             <hr>
             <input type="color" id="ctx-color"
                 value="#000000">
-            <label for="head">Color</label>
+            <label for="head">Color</label><br />
+            <button class="btn btn-danger" onclick="eraser()">Eraser</button>
+            <hr>
+            Line Thickness: 
+            <div class="thickness-slider">
+                <input type="range" min="1" max="50" value="5" id="ctx-thickness"><br />
+                Current: <div id="thickness-value"></div>
+            </div>
+            <hr>
         </div>
+
     </div>
 
     <div id="dm-chat">
@@ -51,7 +60,7 @@
         <input id="recipient" type="text" name="name" placeholder="Recipient"><br />
         <label for="msg"></label>
         <input id="msg" type="text" name="comment" placeholder="Message"><br />
-        <button onclick="sendMessage()">Send</button>
+        <button class="btn btn-success mt-2" onclick="sendMessage()">Send</button>
         <div id='direct-messages'></div>
     </div>
 

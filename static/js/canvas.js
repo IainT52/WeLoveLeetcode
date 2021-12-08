@@ -57,6 +57,12 @@ function receivedDirectMessage(directMessage) {
     return
 }
 
+function eraser() {
+    drawColor = "#FFFFFF"
+    $("#drawing-board").css({"cursor": "url('data:image/x-icon;base64,AAACAAEAICACAAAAAAAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA66TnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAC4AAABuAAAA4AAAAdwAAAO4AAAHcAAABuAAAAXAAAADgAAAAAAAAA///////////////////////////////////////////////////////////////////////////////////////////////////////////+D////A////gP///wD///4A///8Af//+AP///AH///wD///8B////A////wf///8='), auto"})
+    // body { cursor: url('data:image/x-icon;base64,AAACAAEAICACAAAAAAAwAQAAFgAAACgAAAAgAAAAQAAAAAEAAQAAAAAAgAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAA66TnAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADgAAAC4AAABuAAAA4AAAAdwAAAO4AAAHcAAABuAAAAXAAAADgAAAAAAAAA///////////////////////////////////////////////////////////////////////////////////////////////////////////+D////A////gP///wD///4A///8Af//+AP///AH///wD///8B////A////wf///8='), auto; }
+    return
+}
 
 // Called when the server sends a new coordinate over the WebSocket and draw it to the canvas
 function updateCanvas(message) {
@@ -107,7 +113,7 @@ canvas.mousedown(e => { setPosition(e), clicking = true })
 canvas.mousemove(draw)
 canvas.mouseup(e => { sendCoordinate({ x: -1, y: -1 }), clicking = false })
 canvas.mouseout(e => clicking = false)
-$("#ctx-color").change(e => drawColor = e.target.value)
+$("#ctx-color").change(e => {drawColor = e.target.value, $("#drawing-board").css({"cursor": "crosshair"})})
 $("#ctx-thickness").change(e => thickness = e.target.value)
 $(window).resize(resize)
 

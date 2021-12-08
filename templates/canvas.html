@@ -41,7 +41,8 @@
             <hr>
             <input type="color" id="ctx-color"
                 value="#000000">
-            <label for="head">Color</label>
+            <label for="head">Color</label><br />
+            <button class="btn btn-danger" onclick="eraser()">Eraser</button>
             <hr>
             Line Thickness: 
             <div class="thickness-slider">
@@ -59,7 +60,7 @@
         <input id="recipient" type="text" name="name" placeholder="Recipient"><br />
         <label for="msg"></label>
         <input id="msg" type="text" name="comment" placeholder="Message"><br />
-        <button onclick="sendMessage()">Send</button>
+        <button class="btn btn-success mt-2" onclick="sendMessage()">Send</button>
         <div id='direct-messages'></div>
     </div>
 

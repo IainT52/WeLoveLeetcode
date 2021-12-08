@@ -4,6 +4,8 @@ from websockets import logged_in
 
 cur_dir = os.path.dirname(__file__)
 def getRelativePath(path):
+
+    # return os.path.join(cur_dir, path)
     return os.path.abspath(os.path.realpath(os.path.join(cur_dir, path)))
 
 paths = {
@@ -21,11 +23,12 @@ paths = {
 
 
 def handlePath( path, headers):
+    print(os.name)
     if path not in paths:
         return responses.handleTextResponse("The resource requested cannot be found in this server!", "404 Not Found")
     
     if path == "/":
-        return responses.parseHtml(getRelativePath("templates\index.html"), {}, "")
+        return responses.parseHtml(getRelativePath("templates/index.html"), {}, "")
     elif path == "/websocket":
         return responses.handleSocketHandshake(path, headers)
     

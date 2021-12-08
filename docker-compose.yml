@@ -1,14 +1,13 @@
-version: "3.8"
+version: '3.3'
 services:
+  mysql:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: '1F900b8b3d52;'
+      MYSQL_DATABASE: '312db'
   app:
     build: .
     environment:
       WAIT_HOSTS: mysql:3306
     ports:
-      - 8080:8000
-  mysql:
-    image: mysql
-    environment:
-      MYSQL_DATABASE: '312db'
-      MYSQL_ROOT_PASSWORD: 'mysql'
-  
+      - '8080:8000'

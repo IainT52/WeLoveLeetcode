@@ -1,4 +1,4 @@
-import mysql.connector, os, random
+import mysql.connector, random
 from auth import encrypt
 
 
@@ -8,8 +8,8 @@ default_images = ["static/images/deer.jpg", "static/images/eagle.jpg", "static/i
 database = mysql.connector.connect(
     host="mysql",
     user="root",
-    password="cse312homework",
-    database="canvas"
+    password="1F900b8b3d52;",
+    database="312db"
 )
 
 mycursor = database.cursor(prepared=True)

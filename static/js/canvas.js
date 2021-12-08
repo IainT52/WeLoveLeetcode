@@ -8,14 +8,15 @@ var canvas = $("#drawing-board"), colorSelector = $("#ctx-color")
 var ctx = canvas[0].getContext('2d')
 var offset = canvas.offset()
 var curPos = { x: 0, y: 0 }
-var colors = {'blue':'#0066ff', 'green':'#009933', 'red':'#c0392b', 'yellow':'#c0392b', 'pink':'#ff33cc', 'purple':'#9933ff', 'orange':'#ff6600', 'brown':'#996633', 'black':'#000000'}
-
-var clicking = false, drawColor = '#000000', mouseUp = true
-
+var clicking = false, drawColor = '#000000', mouseUp = true, thickness = 2
 // Establish a WebSocket connection with the server
 const socket = new WebSocket('ws://' + window.location.host + '/websocket');
-
-
+// display thickness value from slider
+thicknessSlider = document.getElementById('ctx-thickness')
+$("#thickness-value").html(thicknessSlider.value)
+thicknessSlider.oninput = function() {
+    $("#thickness-value").html(this.value)
+}
 /*
 
 WEBSOCKET
@@ -75,7 +76,7 @@ function updateCanvas(message) {
     }
     ctx.beginPath()
 
-    ctx.lineWidth = 1
+    ctx.lineWidth = coordinate.thickness
     ctx.lineCap = 'round'
     ctx.strokeStyle = coordinate.color
 
@@ -107,6 +108,7 @@ canvas.mousemove(draw)
 canvas.mouseup(e => { sendCoordinate({ x: -1, y: -1 }), clicking = false })
 canvas.mouseout(e => clicking = false)
 $("#ctx-color").change(e => drawColor = e.target.value)
+$("#ctx-thickness").change(e => thickness = e.target.value)
 $(window).resize(resize)
 
 
@@ -121,7 +123,7 @@ function draw(e) {
     if (clicking) {
         ctx.beginPath()
 
-        ctx.lineWidth = 1
+        ctx.lineWidth = thickness
         ctx.lineCap = 'round'
         ctx.strokeStyle = drawColor
 
@@ -130,7 +132,7 @@ function draw(e) {
         ctx.lineTo(curPos.x, curPos.y)
 
         ctx.stroke()
-        sendCoordinate({...curPos, color:drawColor})
+        sendCoordinate({...curPos, color:drawColor, thickness: thickness})
     }
 }
 

@@ -1,6 +1,4 @@
 import json
-import hashlib  # hashlib (SHA-1) needed for websockets
-from base64 import b64encode, decode  # base64 for websockets
 clients = []  # tcp connection objects connected to the site are stored here
 logged_in = []  # usernames... client idx corresponds to username idx
 

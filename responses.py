@@ -15,6 +15,13 @@ def handleRedirect(path):
     return f"HTTP/1.1 301 Moved Permanently\r\nLocation: {path}".encode()
 
 
+def handleImageResponse(image, status, content_type):
+    print(image)
+    image = open(image, "rb").read()
+    response = f"HTTP/1.1 {status}\r\nContent-Type: {content_type}\r\nContent-Length: {len(image)}\r\nX-Content-Type-Options: nosniff\r\n\r\n".encode()
+    return response + image
+
+
 def handleSocketHandshake(path, headers):
     socket_key = (headers["Sec-WebSocket-Key"].value + "258EAFA5-E914-47DA-95CA-C5AB0DC85B11").encode()
     hash_object = hashlib.sha1()

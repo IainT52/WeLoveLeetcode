@@ -1,7 +1,9 @@
-import mysql.connector
+import mysql.connector, os, random
 from auth import encrypt
 
+
 tokens = set()
+default_images = ["static/images/deer.jpg", "static/images/eagle.jpg", "static/images/whale.jpg"]
 
 database = mysql.connector.connect(
     # host="mysql",
@@ -9,25 +11,18 @@ database = mysql.connector.connect(
     password="1F900b8b3d52;",
     database="312db"
 )
-# iain db 312db pass 1F900b8b3d52;
-# nick pass cse312homework
+
 mycursor = database.cursor(prepared=True)
 
-mycursor.execute("CREATE TABLE IF NOT EXISTS registration (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, UNIQUE (username))")
+mycursor.execute("CREATE TABLE IF NOT EXISTS registration (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, password VARCHAR(255) NOT NULL, image TEXT, UNIQUE (username))")
 mycursor.execute("CREATE TABLE IF NOT EXISTS cookie_jar (id INT AUTO_INCREMENT PRIMARY KEY, token VARCHAR(255) NOT NULL, username VARCHAR(255) NOT NULL, UNIQUE (username))")
-mycursor.execute("CREATE TABLE IF NOT EXISTS gallery (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, image BLOB)")
+# mycursor.execute("CREATE TABLE IF NOT EXISTS gallery (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(255) NOT NULL, image BLOB)")
 
-def paint(username, image):
-    command = "SELECT * FROM registration WHERE username = (?)"
+def get_profile_photo(username):
+    command = "SELECT image FROM registration WHERE username = (?)"
     mycursor.execute(command, (username,))
     fetch = mycursor.fetchall()
-    if fetch == []:
-        return False
-    command = "INSERT INTO gallery (username, image) VALUES (?,?)"
-    value = (username, image, )
-    mycursor.execute(command, value)
-    database.commit()
-    return True
+    return fetch[0][0]
 
 #Register function returns a boolean - if true, username registered, if false, username not registered.
 def register(username, password):
@@ -37,8 +32,9 @@ def register(username, password):
         mycursor.execute(command, (username,))
         fetch = mycursor.fetchall()
         if fetch == []:
-            command = "INSERT INTO registration (username, password) VALUES (?, ?)"
-            value = (username, hashed, )
+            command = "INSERT INTO registration (username, password, image) VALUES (?, ?, ?)"
+            photo = default_images[random.randint(0,2)]
+            value = (username, hashed, photo)
             mycursor.execute(command, value)
             database.commit()
             return True

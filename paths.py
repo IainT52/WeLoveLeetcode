@@ -8,12 +8,15 @@ def getRelativePath(path):
 
 paths = {
     "/": "",
+    "/account": "",
     "/websocket": "",
     "/static/css/canvas.css": responses.handleFileResponse(getRelativePath("static/css/canvas.css"), "200 OK", "text/css"),
     "/static/js/canvas.js": responses.handleFileResponse(getRelativePath("static/js/canvas.js"), "200 OK", "text/javascript"),
     "/static/js/reglog.js": responses.handleFileResponse(getRelativePath("static/js/reglog.js"), "200 OK", "text/javascript"),
-    "/account": "",
     "/templates/canvas.html": responses.handleFileResponse(getRelativePath("templates/canvas.html"), "200 OK", "text/html"),
+    "/static/images/deer.jpg": responses.handleImageResponse(getRelativePath("static/images/deer.jpg"), "200 OK", "image/jpeg"),
+    "/static/images/eagle.jpg": responses.handleImageResponse(getRelativePath("static/images/eagle.jpg"), "200 OK", "image/jpeg"),
+    "/static/images/whale.jpg": responses.handleImageResponse(getRelativePath("static/images/whale.jpg"), "200 OK", "image/jpeg"),
 }
 
 
@@ -49,7 +52,7 @@ def handleForms(parsed_body):
 
         if login(username, password):
             logged_in.append(username)
-            variables = {"account": [username], "users_list": [user for user in logged_in if user != username]}
+            variables = {"account": [{"username":username, "photo":get_profile_photo(username)}], "users_list": [{"username":user, "photo":get_profile_photo(user)} for user in logged_in if user != username]}
             auth_token = cookies.cookie_tokenizer(username)
             return responses.parseHtml(getRelativePath("templates/canvas.html"), variables, auth_token)
         else:

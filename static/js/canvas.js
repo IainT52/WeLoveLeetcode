@@ -44,7 +44,9 @@ function receivedDirectMessage(directMessage) {
     senderName = directMessage['sender'];
     if (recipientName == senderName) {
         alert('ERROR: The recipient does not exist or you sent a message to yourself!');
-        return
+        return // err, don't continue with rest of the fn
+    } else {
+        alert(`You received a DM from '${senderName}'`);
     }
     message = directMessage['message'];
     directMessagesDiv = document.getElementById('direct-messages');

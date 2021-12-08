@@ -4,9 +4,9 @@ from auth import encrypt
 tokens = set()
 
 database = mysql.connector.connect(
-    # host="mysql",
+    host="mysql",
     user="root",
-    password="1F900b8b3d52;",
+    password="mysql",
     database="312db"
 )
 # iain db 312db pass 1F900b8b3d52;

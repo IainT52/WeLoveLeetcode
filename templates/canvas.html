@@ -14,14 +14,14 @@
 <section>
 <body>
     <div id ="accountName">
-        Account: {{account.username}}
+        <img src="{{account.photo}}" alt="profile-photo" class="user-image"/> Account: {{account.username}}
     </div>
     <div id="progressbar"></div>
     <div id="scrollPath"></div>
     <div class="canvas-container">
         <div class="user-table">
             <div id = "test">
-                Me: {{account.username}}
+                Me: <img src="{{account.photo}}" alt="profile-photo" class="user-image"/> {{account.username}}
                 <hr style="height:2px;border-width:0;color:black;background-color:black">
             </div>
             Users

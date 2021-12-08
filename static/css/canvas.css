@@ -141,9 +141,12 @@ hr {
 
 .user-container {
     display: flex;
+    justify-content: center;
 }
 
 .user-image {
+    margin:auto 0 auto 0; 
+    border-radius: 50%;
     height: 25px;
     width: 25px;
 }

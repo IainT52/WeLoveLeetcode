@@ -140,6 +140,7 @@ function draw(e) {
         ctx.stroke()
         sendCoordinate({...curPos, color:drawColor, thickness: thickness})
     }
+    else {sendCoordinate({ x: -1, y: -1 })}
 }
 
 

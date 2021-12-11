@@ -24,7 +24,7 @@
                 Me: <img src="{{account.photo}}" alt="profile-photo" class="user-image"/> {{account.username}}
                 <hr style="height:2px;border-width:0;color:black;background-color:black">
             </div>
-            Users
+            Users:
             <br/>
             {{for user in users_list}}
                 <div class="user-container">
@@ -63,6 +63,25 @@
         <button class="btn btn-success mt-2" onclick="sendMessage()">Send</button>
         <div id='direct-messages'></div>
     </div>
+
+    <!-- Begin import form -->
+
+        <h2 class="pb-2 border-bottom">Upload An Image</h2>
+        <form action="profile" method="post" enctype="multipart/form-data" class="p-4 p-md-5 border rounded-3 bg-dark">
+            <input value="{{xsrf_token}}" name="xsrf_token" hidden>
+            <div class="form-floating mb-3">
+                <input type="file" class="form-control" name="profile-photo"/>
+                <label for="upload-image"></label>
+            </div>
+            <button class="w-100 btn btn-lg btn-primary" type="submit">
+                Upload!
+            </button>
+
+            <hr class="my-4" />
+            <small class="text-muted">Please upload images one at a time.</small>
+        </form>
+
+    <!-- End import form-->
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Bootstrap JS -->

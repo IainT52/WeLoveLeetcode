@@ -1,6 +1,8 @@
 import json
-clients = []  # tcp connection objects connected to the site are stored here
-logged_in = []  # usernames... client idx corresponds to username idx
+from database import hasValidAuthToken
+
+client_to_name = {}  # tcp connection objects connected to the site are stored here
+name_to_client = {}
 
 
 # returns a string with html characters encoded
@@ -12,10 +14,9 @@ def htmlSafe(string):
 
 # removes client object from clients list
 def closeWebSocketConnection(self):
-    idx = clients.index(self)
-    clients.pop(idx)
-    print(f"{logged_in.pop(idx)} logged out")
-    # update logged in
+    username = client_to_name[self]
+    del client_to_name[self]
+    del name_to_client[username]
     return
 
 
@@ -53,7 +54,7 @@ def decodeLargeFrame(frame, payload_len):
 
 # sends message to all clients, clients are added to this list on connection
 def broadcast(sender, message):
-    for client in clients:
+    for client in client_to_name.keys():
         try:
             if client == sender:
                 continue
@@ -89,8 +90,11 @@ def sendLargeFrame(self, payload):
     return frame_to_send
 
 
-def openSocketConnection(self):
-    clients.append(self)
+def openSocketConnection(self, headers):
+    validAuthToken, username = hasValidAuthToken(headers)
+    
+    client_to_name[self] = username
+    name_to_client[username] = self
     # SEND CURRENT CANVAS TO NEWLY CONNECTED CLIENT
 
     while True:
@@ -101,17 +105,14 @@ def openSocketConnection(self):
         decoded_payload = json.loads(payload.decode())  # 'utf-8'
         if 'recipient' and 'message' in decoded_payload:
             recipient_name = decoded_payload['recipient']
-            if recipient_name in logged_in:
-                recipient_idx = logged_in.index(recipient_name)
-                recipient = clients[recipient_idx]
+            if recipient_name in name_to_client:
+                recipient = name_to_client[recipient_name]
             else:  # send error message to sender, recipient doesn't exist
-                recipient_idx = clients.index(self)
-                recipient = clients[recipient_idx]
+                recipient = self
                 # set recipient name to self, actual recipient DNE
-                decoded_payload['recipient'] = logged_in[recipient_idx]
-
-            sender_name = logged_in[clients.index(self)]
-            decoded_payload['sender'] = sender_name
+                decoded_payload['recipient'] = username
+            
+            decoded_payload['sender'] = username
             safe_payload = {htmlSafe(k): htmlSafe(v)
                             for k, v in decoded_payload.items()}
             sendFrame(recipient, bytearray(

@@ -1,5 +1,5 @@
 import hashlib, base64, re, secrets
-from database import tokens
+from database import tokens, hasValidAuthToken
 
 
 def handleFileResponse(file, status, content_type):
@@ -16,8 +16,12 @@ def handleRedirect(path):
 
 
 def handleImageResponse(image, status, content_type):
-    print(image)
     image = open(image, "rb").read()
+    response = f"HTTP/1.1 {status}\r\nContent-Type: {content_type}\r\nContent-Length: {len(image)}\r\nX-Content-Type-Options: nosniff\r\n\r\n".encode()
+    return response + image
+
+
+def handleDbImageResponse(image, status, content_type):
     response = f"HTTP/1.1 {status}\r\nContent-Type: {content_type}\r\nContent-Length: {len(image)}\r\nX-Content-Type-Options: nosniff\r\n\r\n".encode()
     return response + image
 
@@ -27,6 +31,10 @@ def handleSocketHandshake(path, headers):
     hash_object = hashlib.sha1()
     hash_object.update(socket_key)
     accept_response = base64.b64encode(bytes.fromhex(hash_object.hexdigest())).decode()
+
+    validAuthToken, username = hasValidAuthToken(headers)
+    if not validAuthToken:
+        return handleTextResponse("Forbidden, you must be logged in to open a socket connection.", "403 Forbidden")
     
     return f"HTTP/1.1 101 Switching Protocols\r\nConnection: Upgrade\r\nUpgrade: websocket\r\nSec-WebSocket-Accept: {accept_response}\r\nX-Content-Type-Options: nosniff\r\n\r\n".encode()
 

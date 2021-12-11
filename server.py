@@ -11,6 +11,7 @@ class Header:
 def parseBody(body_data, headers):
     content_type = headers["Content-Type"]
     parsed_body = {}
+    isImage = False
 
     if content_type.value == "multipart/form-data":
         boundary = ("--" + content_type.extra["boundary"] + "\r\n").encode('utf-8')
@@ -20,15 +21,16 @@ def parseBody(body_data, headers):
         
         for content in body:
             header_data, data = content.split("\r\n\r\n".encode('utf-8'))
-            headers = parseHeader(header_data, False)
-            name = (headers["Content-Disposition"].extra["name"]).strip('"')
-            parsed_body[name] = (data, headers)
+            new_headers = parseHeader(header_data, False)
+            isImage = isImage or ("Content-Type" in new_headers and new_headers["Content-Type"].value[:5] == "image")
+            name = (new_headers["Content-Disposition"].extra["name"]).strip('"')
+            parsed_body[name] = (data, new_headers)
     
-    return paths.handleForms(parsed_body)
+    return paths.handleForms(parsed_body, headers, isImage)
 
 
 def parseHeader(header_data, hasRequestLine):
-    extra_types = {"Content-Disposition", "Content-Type"}
+    extra_types = {"Content-Disposition", "Content-Type", "Cookie"}
     headers = {}
     start = 0
     header_data = header_data.decode("utf-8").split("\r\n")
@@ -47,12 +49,12 @@ def parseHeader(header_data, hasRequestLine):
         header_type, value = cur_header.split(": ")
         values = value.split("; ")
         extras = {}
-        for j in range(1, len(values)):
-            if header_type in extra_types:
+        for j in range(len(values)):
+            if header_type in extra_types and '=' in values[j]:
                 key, val = values[j].split("=")
                 extras[key] = val
         headers[header_type] = Header(header_type, values[0], extras)
-
+    
     return headers
 
 
@@ -84,7 +86,7 @@ class RequestHandler(socketserver.BaseRequestHandler):
         self.request.sendall(response)
         
         if headers["Path"].value == "/websocket":
-            openSocketConnection(self)  # handshake is complete before this function call
+            openSocketConnection(self, headers)  # handshake is complete before this function call
             
         self.request.close()
         return

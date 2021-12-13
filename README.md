@@ -3,4 +3,11 @@
 
 ## Reports
 
-We are removing Flask and replacing it with our own server and templating functionality. The only libraries we use are ones allowed in the homework, which means we are not going to have any reports for our project.
+We don't use any frameworks/libraries not allowed for our homework assignments, which means we do not have any reports.
+
+## Usage
+
+Start Docker with Docker compose up and go to localhost:8080.
+
+
+If you scroll down, you will see a form to send dm's to other users that are online. You will also see a form to upload custom profile pictures.
